@@ -1,4 +1,3 @@
-import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
@@ -25,9 +24,3 @@ public struct StringifyMacro: ExpressionMacro {
     }
 }
 
-@main
-struct MissingMacrosPlugin: CompilerPlugin {
-    let providingMacros: [Macro.Type] = [
-        StringifyMacro.self,
-    ]
-}
