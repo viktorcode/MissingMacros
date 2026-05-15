@@ -9,7 +9,7 @@ import MissingMacrosInternal
 
 let testMacros: [String: Macro.Type] = [
     "stringify": StringifyMacro.self,
-    "URL": URLMacro.self,
+    "url": URLMacro.self,
 ]
 #endif
 

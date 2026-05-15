@@ -9,6 +9,6 @@ import Foundation
 @freestanding(expression)
 public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "MissingMacrosInternal", type: "StringifyMacro")
 
-/// Validates a URL string at compile time.
+/// Validates a URL string at compile time, producing a non-optional `URL`
 @freestanding(expression)
-public macro URL(_ value: StaticString) -> URL = #externalMacro(module: "MissingMacrosInternal", type: "URLMacro")
+public macro url(_ string: StaticString) -> URL = #externalMacro(module: "MissingMacrosInternal", type: "URLMacro")
