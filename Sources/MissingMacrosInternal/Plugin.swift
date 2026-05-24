@@ -11,7 +11,6 @@ import SwiftCompilerPlugin
 @main
 struct MissingMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
-        StringifyMacro.self,
         URLMacro.self
     ]
 }
