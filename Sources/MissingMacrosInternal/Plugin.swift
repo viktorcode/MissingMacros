@@ -11,6 +11,7 @@ import SwiftCompilerPlugin
 @main
 struct MissingMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
-        URLMacro.self
+        URLMacro.self,
+        AddAsyncMacro.self
     ]
 }
