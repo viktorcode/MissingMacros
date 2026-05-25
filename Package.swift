@@ -6,8 +6,7 @@
        name: "MissingMacros",
        platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6), .macCatalyst(.v13)],
        products: [
-           .library(name: "MissingMacros", targets: ["MissingMacros"]),
-           .executable(name: "MissingMacrosClient", targets: ["MissingMacrosClient"]),
+           .library(name: "MissingMacros", targets: ["MissingMacros"])
        ],
        dependencies: [
            .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.0-latest"),
@@ -21,7 +20,6 @@
                ]
            ),
            .target(name: "MissingMacros", dependencies: ["MissingMacrosInternal"]),
-           .executableTarget(name: "MissingMacrosClient", dependencies: ["MissingMacros"]),
            .testTarget(
                name: "MissingMacrosTests",
                dependencies: [
