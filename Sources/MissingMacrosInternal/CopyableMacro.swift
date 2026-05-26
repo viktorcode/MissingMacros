@@ -71,15 +71,14 @@ public struct CopyableMacro: MemberMacro {
                 rightParen: .rightParenToken()
             )
 
-            // Create method with unnamed parameter: `func withName(_ name: String) -> Self`
+            // Create method with overriden parameter, like: `func with(name: String) -> Self`
             let methodDecl = FunctionDeclSyntax(
-                name: .identifier("with\(propName.text.capitalizedFirstLetter)"),
+                name: .identifier("with"),
                 signature: FunctionSignatureSyntax(
                     parameterClause: FunctionParameterClauseSyntax(
                         parameters: FunctionParameterListSyntax([
                             FunctionParameterSyntax(
-                                firstName: .wildcardToken(),   // external label is _
-                                secondName: propName,          // internal name is the property name
+                                firstName: propName,   // internal name is the property name
                                 type: propType
                             )
                         ])
@@ -94,12 +93,6 @@ public struct CopyableMacro: MemberMacro {
             )
             return DeclSyntax(methodDecl)
         }
-    }
-}
-
-private extension String {
-    var capitalizedFirstLetter: String {
-        prefix(1).capitalized + dropFirst()
     }
 }
 

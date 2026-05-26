@@ -106,11 +106,11 @@ final class MissingMacrosTests: XCTestCase {
                 let name: String
                 var age: Int
 
-                func withName(_ name: String) -> Self {
+                func with(name: String) -> Self {
                     Self(name: name, age: self.age)
                 }
 
-                func withAge(_ age: Int) -> Self {
+                func with(age: Int) -> Self {
                     Self(name: self.name, age: age)
                 }
             }
@@ -130,7 +130,7 @@ final class MissingMacrosTests: XCTestCase {
         }
 
         let first = User(name: "Eleven", age: 11)
-        let second = first.withAge(12)
+        let second = first.with(age: 12)
 
         XCTAssertTrue(second.age == 12 && second.name == first.name)
     }
