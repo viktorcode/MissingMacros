@@ -8,3 +8,6 @@ public macro url(_ string: StaticString) -> URL = #externalMacro(module: "Missin
 /// The function must return `Void` and have a completion handler as its last parameter.
 @attached(peer, names: overloaded)
 public macro AddAsync() = #externalMacro(module: "MissingMacrosInternal", type: "AddAsyncMacro")
+
+@attached(member, names: arbitrary)
+public macro Copyable() = #externalMacro(module: "MissingMacrosInternal", type: "CopyableMacro")

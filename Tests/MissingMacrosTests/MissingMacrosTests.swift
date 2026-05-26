@@ -11,6 +11,7 @@ import MissingMacrosInternal
 
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
+    "Copyable": CopyableMacro.self
 ]
 #endif
 
@@ -54,6 +55,12 @@ final class MissingMacrosTests: XCTestCase {
         #endif
     }
 
+    func testURLMacro() throws {
+        let expected = "www.apple.com"
+        let url = #url("https://www.apple.com")
+        XCTAssertTrue(url.host()! == expected, "Expected \"\(expected)\" but found \(url.host()!)")
+    }
+
     // MARK: - AddAsync Runtime Tests
 
     func testAddAsyncThrowing() async throws {
@@ -82,5 +89,49 @@ final class MissingMacrosTests: XCTestCase {
         let myStruct = MyStruct()
         let result = await myStruct.doResult(a: 10, for: "value", 40)
         XCTAssertTrue(result)
+    }
+
+    func testCopyableExpansion() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @Copyable
+            struct User {
+                let name: String
+                var age: Int
+            }
+            """,
+            expandedSource: """
+            struct User {
+                let name: String
+                var age: Int
+
+                func withName(_ name: String) -> Self {
+                    Self(name: name, age: self.age)
+                }
+
+                func withAge(_ age: Int) -> Self {
+                    Self(name: self.name, age: age)
+                }
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testCopyable() throws {
+        @Copyable
+        struct User {
+            let name: String
+            var age: Int
+        }
+
+        let first = User(name: "Eleven", age: 11)
+        let second = first.withAge(12)
+
+        XCTAssertTrue(second.age == 12 && second.name == first.name)
     }
 }

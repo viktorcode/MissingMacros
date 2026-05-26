@@ -24,6 +24,7 @@
                name: "MissingMacrosTests",
                dependencies: [
                    "MissingMacrosInternal",
+                   "MissingMacros",
                    .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
                ]
            ),
