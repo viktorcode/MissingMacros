@@ -17,7 +17,7 @@ public struct CopyableMacro: MemberMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         guard let structDecl = declaration.as(StructDeclSyntax.self) else {
-            throw MacroExpansionErrorMessage("'@Copyable' can only be applied to a struct")
+            throw CopyableMacroError.notStruct
         }
 
         var storedProperties: [(name: TokenSyntax, type: TypeSyntax)] = []
@@ -34,7 +34,7 @@ public struct CopyableMacro: MemberMacro {
         }
 
         guard !storedProperties.isEmpty else {
-            throw MacroExpansionErrorMessage("'@Copyable' requires at least one stored property")
+            throw CopyableMacroError.noStoredProperties
         }
 
         return storedProperties.map { propName, propType in
@@ -96,8 +96,13 @@ public struct CopyableMacro: MemberMacro {
     }
 }
 
-struct MacroExpansionErrorMessage: Error, CustomStringConvertible {
-    let message: String
-    var description: String { message }
-    init(_ message: String) { self.message = message }
+enum CopyableMacroError: Error, CustomStringConvertible {
+    case notStruct
+    case noStoredProperties
+    var description: String {
+        switch self {
+        case .notStruct: "@Copyable can only be applied to a struct"
+        case .noStoredProperties: "@Copyable requires at least one stored property"
+        }
+    }
 }

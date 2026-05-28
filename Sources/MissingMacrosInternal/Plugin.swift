@@ -13,6 +13,7 @@ struct MissingMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         URLMacro.self,
         AddAsyncMacro.self,
+        AddCompletionMacro.self,
         CopyableMacro.self
     ]
 }

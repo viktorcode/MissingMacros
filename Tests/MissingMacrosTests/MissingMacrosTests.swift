@@ -11,7 +11,8 @@ import MissingMacrosInternal
 
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
-    "Copyable": CopyableMacro.self
+    "Copyable": CopyableMacro.self,
+    "AddCompletion": AddCompletionMacro.self
 ]
 #endif
 
@@ -91,6 +92,8 @@ final class MissingMacrosTests: XCTestCase {
         XCTAssertTrue(result)
     }
 
+    // MARK: - Copyable Tests
+
     func testCopyableExpansion() throws {
         #if canImport(MissingMacrosInternal)
         assertMacroExpansion(
@@ -133,5 +136,82 @@ final class MissingMacrosTests: XCTestCase {
         let second = first.with(age: 12)
 
         XCTAssertTrue(second.age == 12 && second.name == first.name)
+    }
+
+    // MARK: - AddCompletion Tests
+
+    func testAddCompletionExpansionWithReturn() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @AddCompletion
+            func fetch(id: Int) async -> String {
+                return "Item \\(id)"
+            }
+            """,
+            expandedSource: """
+            func fetch(id: Int) async -> String {
+                return "Item \\(id)"
+            }
+
+            func fetch(id: Int, completion: @escaping @Sendable (String) -> Void) {
+              Task {
+                completion(await fetch(id: id))
+              }
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testAddCompletionExpansionVoid() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @AddCompletion
+            func perform() async {
+                print("done")
+            }
+            """,
+            expandedSource: """
+            func perform() async {
+                print("done")
+            }
+
+            func perform(completion: @escaping @Sendable () -> Void) {
+              Task {
+                completion(await perform())
+              }
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testAddCompletionRuntime() {
+        // The @AddCompletion macro adds a completion‑handler overload.
+        // This test calls that overload directly.
+        struct Calculator {
+            @AddCompletion
+            func double(_ x: Int) async -> Int {
+                x * 2
+            }
+        }
+
+        let calc = Calculator()
+        let expectation = expectation(description: "Completion handler called")
+
+        calc.double(5) { result in
+            XCTAssertEqual(result, 10)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 1)
     }
 }

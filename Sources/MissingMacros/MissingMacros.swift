@@ -9,6 +9,10 @@ public macro url(_ string: StaticString) -> URL = #externalMacro(module: "Missin
 @attached(peer, names: overloaded)
 public macro AddAsync() = #externalMacro(module: "MissingMacrosInternal", type: "AddAsyncMacro")
 
-/// Generates functions of the form `func with(...)` for each property allowing creating a struct copy with one property value changed.
+/// Adds an overload with completion handler to the annotated async function.
+@attached(peer, names: overloaded)
+public macro AddCompletion() = #externalMacro(module: "MissingMacrosInternal", type: "AddCompletionMacro")
+
+/// For each struct's property, generates function of the form `func with(...)` for creating a struct copy with the property value replaced.
 @attached(member, names: arbitrary)
 public macro Copyable() = #externalMacro(module: "MissingMacrosInternal", type: "CopyableMacro")
