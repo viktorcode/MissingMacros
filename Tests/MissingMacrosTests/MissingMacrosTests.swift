@@ -97,12 +97,14 @@ final class MissingMacrosTests: XCTestCase {
             """
             @Copyable
             struct User {
+                static var ignored: Int = 42
                 let name: String
                 var age: Int
             }
             """,
             expandedSource: """
             struct User {
+                static var ignored: Int = 42
                 let name: String
                 var age: Int
 
