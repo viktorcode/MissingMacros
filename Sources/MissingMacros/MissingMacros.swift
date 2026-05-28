@@ -16,3 +16,6 @@ public macro AddCompletion() = #externalMacro(module: "MissingMacrosInternal", t
 /// For each struct's property, generates function of the form `func with(...)` for creating a struct copy with the property value replaced.
 @attached(member, names: arbitrary)
 public macro Copyable() = #externalMacro(module: "MissingMacrosInternal", type: "CopyableMacro")
+
+@attached(member, names: arbitrary)
+public macro CaseAccessor() = #externalMacro(module: "MissingMacrosInternal", type: "CaseAccessorMacro")

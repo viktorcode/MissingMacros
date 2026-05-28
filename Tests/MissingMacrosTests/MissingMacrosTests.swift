@@ -18,7 +18,6 @@ let testMacros: [String: Macro.Type] = [
 
 final class MissingMacrosTests: XCTestCase {
     // MARK: - URL Macro Tests
-
     func testURLMacroValid() throws {
         #if canImport(MissingMacrosInternal)
         assertMacroExpansion(
@@ -63,8 +62,7 @@ final class MissingMacrosTests: XCTestCase {
     }
 
     // MARK: - AddAsync Runtime Tests
-
-    func testAddAsyncThrowing() async throws {
+    func testAddAsyncThrowingRuntime() async throws {
         struct MyStruct {
             @AddAsync
             func doThrowing(a: Int, for b: String, _ value: Double,
@@ -78,7 +76,7 @@ final class MissingMacrosTests: XCTestCase {
         XCTAssertEqual(result, "a: 5, b: Test, value: 20.0")
     }
 
-    func testAddAsyncNonThrowing() async throws {
+    func testAddAsyncNonThrowingRuntime() async throws {
         struct MyStruct {
             @AddAsync
             func doResult(a: Int, for b: String, _ value: Double,
@@ -93,7 +91,6 @@ final class MissingMacrosTests: XCTestCase {
     }
 
     // MARK: - Copyable Tests
-
     func testCopyableExpansion() throws {
         #if canImport(MissingMacrosInternal)
         assertMacroExpansion(
@@ -125,7 +122,7 @@ final class MissingMacrosTests: XCTestCase {
         #endif
     }
 
-    func testCopyable() throws {
+    func testCopyableRuntime() throws {
         @Copyable
         struct User {
             let name: String
@@ -139,7 +136,6 @@ final class MissingMacrosTests: XCTestCase {
     }
 
     // MARK: - AddCompletion Tests
-
     func testAddCompletionExpansionWithReturn() throws {
         #if canImport(MissingMacrosInternal)
         assertMacroExpansion(
@@ -195,8 +191,6 @@ final class MissingMacrosTests: XCTestCase {
     }
 
     func testAddCompletionRuntime() {
-        // The @AddCompletion macro adds a completion‑handler overload.
-        // This test calls that overload directly.
         struct Calculator {
             @AddCompletion
             func double(_ x: Int) async -> Int {
@@ -213,5 +207,21 @@ final class MissingMacrosTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 1)
+    }
+    
+    // MARK: CaseAccessor tests
+    func testCaseAccessorRuntime() {
+        @CaseAccessor
+        enum LoadState {
+            case idle
+            case loading(progress: Double)
+            case loaded(data: String)
+            case failed(Error)
+        }
+
+        let state = LoadState.loaded(data: "Hello")
+        XCTAssertTrue(state.isLoaded)
+        XCTAssertEqual(state.loaded, Optional<String>.some("Hello"))
+        XCTAssertNil(state.loading)
     }
 }

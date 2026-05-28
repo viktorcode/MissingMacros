@@ -14,6 +14,7 @@ struct MissingMacrosPlugin: CompilerPlugin {
         URLMacro.self,
         AddAsyncMacro.self,
         AddCompletionMacro.self,
-        CopyableMacro.self
+        CopyableMacro.self,
+        CaseAccessorMacro.self
     ]
 }
