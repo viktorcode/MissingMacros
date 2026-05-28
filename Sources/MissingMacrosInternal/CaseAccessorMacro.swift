@@ -34,11 +34,12 @@ public struct CaseAccessorMacro: MemberMacro {
                 let capitalized = caseName.capitalized
 
                 // isCase property
-                let isSource = """
-                var is\(capitalized): Bool {
-                  if case .\(caseName) = self { return true }
-                  return false
-                }
+                let isSource =
+                """
+                  var is\(capitalized): Bool {
+                    if case .\(caseName) = self { return true }
+                    return false
+                  }
                 """
                 generatedMembers.append(DeclSyntax(stringLiteral: isSource))
 
@@ -92,11 +93,12 @@ public struct CaseAccessorMacro: MemberMacro {
                     returnTypeString = "(\(typeElements))"
                 }
 
-                let valueSource = """
-                var \(caseName): \(returnTypeString)? {
-                  if case .\(caseName)\(pattern) = self { return \(returnExpr) }
-                  return nil
-                }
+                let valueSource =
+                """
+                  var \(caseName): \(returnTypeString)? {
+                    if case .\(caseName)\(pattern) = self { return \(returnExpr) }
+                    return nil
+                  }
                 """
                 generatedMembers.append(DeclSyntax(stringLiteral: valueSource))
             }
