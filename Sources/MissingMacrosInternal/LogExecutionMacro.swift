@@ -17,31 +17,36 @@ public struct LogExecutionMacro: BodyMacro {
         in context: some MacroExpansionContext
     ) throws -> [CodeBlockItemSyntax] {
 
-        // We only handle functions
         guard let funcDecl = declaration.as(FunctionDeclSyntax.self) else {
             throw MacroExpansionErrorMessage("'@LogExecution' can only be applied to functions")
         }
 
         let functionName = funcDecl.name.text
         let parameters = funcDecl.signature.parameterClause.parameters
+        let hasReturnClause = funcDecl.signature.returnClause != nil
 
-        // Build the string literal that will be passed to print()
+        // Build the log string literal
         let stringLiteral = makePrintStringLiteral(functionName: functionName, parameters: parameters)
-
-        // Wrap it in a `print(...)` call
-        let printCall: ExprSyntax =
-        """
-        print(\(stringLiteral))
-        """
-
-        // Convert the print call into a code block item
+        let printCall: ExprSyntax = "print(\(stringLiteral))"
         let printCodeItem = CodeBlockItemSyntax(item: .expr(printCall))
 
-        // Prepend it to the original function body
-        let originalStatements = funcDecl.body?.statements ?? []
+        // Original statements
+        var originalStatements = Array(funcDecl.body?.statements ?? [])
+
+        // If the function has a return clause and the body consists of a single expression
+        // (not already a return statement), wrap that expression in an explicit `return`.
+        if hasReturnClause,
+           originalStatements.count == 1,
+           let onlyItem = originalStatements.first,
+           case .expr(let expr) = onlyItem.item {
+            // Create a return statement: `return expr`
+            let returnStmt = ReturnStmtSyntax(expression: expr)
+            originalStatements[0] = CodeBlockItemSyntax(item: .stmt(StmtSyntax(returnStmt)))
+        }
+
+        // Prepend the print and add the (possibly modified) original statements
         var newStatements = [printCodeItem]
         newStatements.append(contentsOf: originalStatements)
-
         return newStatements
     }
 

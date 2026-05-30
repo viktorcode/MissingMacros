@@ -251,12 +251,31 @@ final class MissingMacrosTests: XCTestCase {
         #endif
     }
 
-    func testLogExecutionRuntime() {
+    func testLogExecutionImplicitReturnRuntime() {
         @LogExecution
         func double(_ x: Int) -> Int {
             x * 2
         }
-        // Just ensure the macro compiles and the function still works.
+        // Ensure the macro compiles and the function still works.
         XCTAssertEqual(double(3), 6)
+    }
+
+    // This tests that the macro will NOT add another `return` statement for single expression func
+    func testLogExecutionExplicitReturnRuntime() {
+        @LogExecution
+        func greet(name: String) -> String {
+            return "Hello, \(name)"
+        }
+        // Ensure the macro compiles and the function still works.
+        XCTAssertEqual(greet(name: "You"), "Hello, You")
+    }
+
+    func testLogExecutionNoReturnRuntime() {
+        @LogExecution
+        func doWork(_ task: String) {
+            print("Work \(task) completed")
+        }
+        // Ensure the macro compiles and the function still works.
+        XCTAssertTrue(true)
     }
 }
