@@ -12,7 +12,8 @@ import MissingMacrosInternal
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
     "Copyable": CopyableMacro.self,
-    "AddCompletion": AddCompletionMacro.self
+    "AddCompletion": AddCompletionMacro.self,
+    "LogExecution": LogExecutionMacro.self
 ]
 #endif
 
@@ -225,5 +226,37 @@ final class MissingMacrosTests: XCTestCase {
         XCTAssertTrue(state.isLoaded)
         XCTAssertEqual(state.loaded, Optional<String>.some("Hello"))
         XCTAssertNil(state.loading)
+    }
+
+    // MARK: - LogExecution Tests
+    func testLogExecutionExpansion() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @LogExecution
+            func greet(name: String, _ count: Int) {
+                print("Hello")
+            }
+            """,
+            expandedSource: """
+            func greet(name: String, _ count: Int) {
+                print("greet(name: \\(name), \\(count))")
+                print("Hello")
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testLogExecutionRuntime() {
+        @LogExecution
+        func double(_ x: Int) -> Int {
+            x * 2
+        }
+        // Just ensure the macro compiles and the function still works.
+        XCTAssertEqual(double(3), 6)
     }
 }

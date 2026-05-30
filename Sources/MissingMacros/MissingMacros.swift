@@ -17,5 +17,12 @@ public macro AddCompletion() = #externalMacro(module: "MissingMacrosInternal", t
 @attached(member, names: arbitrary)
 public macro Copyable() = #externalMacro(module: "MissingMacrosInternal", type: "CopyableMacro")
 
+/// Simplifies constructing boolean expressions for enums.
+/// For each case of the enum the macro generates case checks in the form `isCase: Bool`.
+/// For each case with associated value it generates get accessors in the form `case: Value?`.
 @attached(member, names: arbitrary)
 public macro CaseAccessor() = #externalMacro(module: "MissingMacrosInternal", type: "CaseAccessorMacro")
+
+/// Logs calls of the annotated function.
+@attached(body)
+public macro LogExecution() = #externalMacro(module: "MissingMacrosInternal", type: "LogExecutionMacro")
