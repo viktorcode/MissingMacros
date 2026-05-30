@@ -18,7 +18,7 @@ public struct LogExecutionMacro: BodyMacro {
     ) throws -> [CodeBlockItemSyntax] {
 
         guard let funcDecl = declaration.as(FunctionDeclSyntax.self) else {
-            throw MacroExpansionErrorMessage("'@LogExecution' can only be applied to functions")
+            throw LogExecutionMacroError.notFunction
         }
 
         let functionName = funcDecl.name.text
@@ -108,8 +108,11 @@ public struct LogExecutionMacro: BodyMacro {
 }
 
 // Helper to throw a nice error message
-struct MacroExpansionErrorMessage: Error, CustomStringConvertible {
-    let message: String
-    var description: String { message }
-    init(_ message: String) { self.message = message }
+enum LogExecutionMacroError: Error, CustomStringConvertible {
+    case notFunction
+    var description: String {
+        switch self {
+        case .notFunction: "@LogExecution can only be applied to functions"
+        }
+    }
 }
