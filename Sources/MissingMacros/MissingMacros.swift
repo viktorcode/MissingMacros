@@ -27,6 +27,13 @@ public macro CaseAccessor() = #externalMacro(module: "MissingMacrosInternal", ty
 @attached(body)
 public macro LogExecution() = #externalMacro(module: "MissingMacrosInternal", type: "LogExecutionMacro")
 
+/// Adds `OptionSet` conformance to the annotated `struct`.
+///
+/// Usage example:
+/// ```swift
+/// @OptionSet("red", "green", "blue")
+/// struct ColorComponents { }
+/// ```
 @attached(member, names: named(rawValue))
 @attached(extension, conformances: OptionSet)
 public macro OptionSet(_ options: String ...) = #externalMacro(module: "MissingMacrosInternal", type: "OptionSetMacro")
