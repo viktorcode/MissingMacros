@@ -16,7 +16,7 @@ struct MissingMacrosPlugin: CompilerPlugin {
         AddCompletionMacro.self,
         CopyableMacro.self,
         CaseAccessorMacro.self,
-        LogExecutionMacro.self
-        // OptionSet.self
+        LogExecutionMacro.self,
+        OptionSetMacro.self
     ]
 }

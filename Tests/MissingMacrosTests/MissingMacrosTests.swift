@@ -13,7 +13,8 @@ let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
     "Copyable": CopyableMacro.self,
     "AddCompletion": AddCompletionMacro.self,
-    "LogExecution": LogExecutionMacro.self
+    "LogExecution": LogExecutionMacro.self,
+    "OptionSet": OptionSetMacro.self
 ]
 #endif
 
@@ -277,5 +278,36 @@ final class MissingMacrosTests: XCTestCase {
         }
         // Ensure the macro compiles and the function still works.
         XCTAssertTrue(true)
+    }
+
+    // MARK: - OptionSet Tests
+    func testOptionSetExpansion() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @OptionSet("red", "green", "blue")
+            struct ColorComponents { }
+            """,
+            expandedSource: """
+            struct ColorComponents { 
+            
+                var rawValue: Int
+            }
+
+            extension ColorComponents: OptionSet {
+                typealias RawValue = Int
+                init(rawValue: Int) {
+                    self.rawValue = rawValue
+                }
+                static let red = Self(rawValue: RawValue(1 << 0))
+                static let green = Self(rawValue: RawValue(1 << 1))
+                static let blue = Self(rawValue: RawValue(1 << 2))
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
     }
 }

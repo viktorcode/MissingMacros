@@ -26,3 +26,7 @@ public macro CaseAccessor() = #externalMacro(module: "MissingMacrosInternal", ty
 /// Logs calls of the annotated function.
 @attached(body)
 public macro LogExecution() = #externalMacro(module: "MissingMacrosInternal", type: "LogExecutionMacro")
+
+@attached(member, names: named(rawValue))
+@attached(extension, conformances: OptionSet)
+public macro OptionSet(_ options: String ...) = #externalMacro(module: "MissingMacrosInternal", type: "OptionSetMacro")
