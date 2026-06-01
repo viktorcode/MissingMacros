@@ -11,7 +11,7 @@ import MissingMacrosInternal
 
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
-    "Copyable": CopyableMacro.self,
+    "CopyBuilder": CopyBuilderMacro.self,             // ← fix typo: was "CopBuilder"
     "AddCompletion": AddCompletionMacro.self,
     "LogExecution": LogExecutionMacro.self,
     "OptionSet": OptionSetMacro.self
@@ -92,12 +92,12 @@ final class MissingMacrosTests: XCTestCase {
         XCTAssertTrue(result)
     }
 
-    // MARK: - Copyable Tests
-    func testCopyableExpansion() throws {
+    // MARK: - CopyBuilder Tests
+    func testCopyBuilderExpansion() throws {
         #if canImport(MissingMacrosInternal)
         assertMacroExpansion(
             """
-            @Copyable
+            @CopyBuilder
             struct User {
                 static var ignored: Int = 42
                 let name: String
@@ -126,8 +126,8 @@ final class MissingMacrosTests: XCTestCase {
         #endif
     }
 
-    func testCopyableRuntime() throws {
-        @Copyable
+    func testCopyBuilderRuntime() throws {
+        @CopyBuilder
         struct User {
             let name: String
             var age: Int

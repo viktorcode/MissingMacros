@@ -1,5 +1,5 @@
 //
-//  CopyableMacro.swift
+//  CopyBuilderMacro.swift
 //  MissingMacros
 //
 //  Created by Viktor Chernikov on 26.05.26.
@@ -9,7 +9,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public struct CopyableMacro: MemberMacro {
+public struct CopyBuilderMacro: MemberMacro {
     public static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
@@ -17,7 +17,7 @@ public struct CopyableMacro: MemberMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         guard let structDecl = declaration.as(StructDeclSyntax.self) else {
-            throw CopyableMacroError.notStruct
+            throw CopyBuilderMacroError.notStruct
         }
 
         var storedProperties: [(name: TokenSyntax, type: TypeSyntax)] = []
@@ -34,7 +34,7 @@ public struct CopyableMacro: MemberMacro {
         }
 
         guard !storedProperties.isEmpty else {
-            throw CopyableMacroError.noStoredProperties
+            throw CopyBuilderMacroError.noStoredProperties
         }
 
         return storedProperties.map { propName, propType in
@@ -96,13 +96,13 @@ public struct CopyableMacro: MemberMacro {
     }
 }
 
-enum CopyableMacroError: Error, CustomStringConvertible {
+enum CopyBuilderMacroError: Error, CustomStringConvertible {
     case notStruct
     case noStoredProperties
     var description: String {
         switch self {
-        case .notStruct: "@Copyable can only be applied to a struct"
-        case .noStoredProperties: "@Copyable requires at least one stored property"
+        case .notStruct: "@CopyBuilder can only be applied to a struct"
+        case .noStoredProperties: "@CopyBuilder requires at least one stored property"
         }
     }
 }

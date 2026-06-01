@@ -15,7 +15,7 @@ public macro AddCompletion() = #externalMacro(module: "MissingMacrosInternal", t
 
 /// For each struct's property, generates function of the form `func with(...)` for creating a struct copy with the property value replaced.
 @attached(member, names: arbitrary)
-public macro Copyable() = #externalMacro(module: "MissingMacrosInternal", type: "CopyableMacro")
+public macro CopyBuilder() = #externalMacro(module: "MissingMacrosInternal", type: "CopyBuilderMacro")
 
 /// Simplifies constructing boolean expressions for enums.
 /// For each case of the enum the macro generates case checks in the form `isCase: Bool`.
