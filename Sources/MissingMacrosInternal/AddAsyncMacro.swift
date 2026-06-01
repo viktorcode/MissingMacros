@@ -29,7 +29,7 @@ public struct AddAsyncMacro: PeerMacro {
         if let returnClause = funcDecl.signature.returnClause,
            returnClause.type.as(IdentifierTypeSyntax.self)?.name.text != "Void"
         {
-            throw AddAsyncMacroError.nonVoid
+            throw AddAsyncMacroError.nonVoidFunc
         }
 
         let completionHandlerParameter = funcDecl
@@ -42,7 +42,8 @@ public struct AddAsyncMacro: PeerMacro {
             throw AddAsyncMacroError.noCompletionHandler
         }
 
-        guard completionHandlerParameter.returnClause.type.as(IdentifierTypeSyntax.self)?.name.text == "Void" else {
+        // Completion handler must return Void
+        guard isVoidType(completionHandlerParameter.returnClause.type) else {
             throw AddAsyncMacroError.nonVoidCompletionHandler
         }
 
@@ -77,7 +78,7 @@ public struct AddAsyncMacro: PeerMacro {
         newParameterListLastParameter.trailingComma = nil
         newParameterList.append(newParameterListLastParameter)
 
-        // Drop the @addAsync attribute from the new declaration.
+        // Drop the @AddAsync attribute from the new declaration.
         let newAttributeList = funcDecl.attributes.filter {
             guard case let .attribute(attribute) = $0,
                   let attributeType = attribute.attributeName.as(IdentifierTypeSyntax.self),
@@ -158,10 +159,24 @@ public struct AddAsyncMacro: PeerMacro {
     }
 }
 
+// Helper to recognise both `Void` and `()` as void return types
+private func isVoidType(_ type: TypeSyntax?) -> Bool {
+    guard let type else { return false }
+    if let idType = type.as(IdentifierTypeSyntax.self),
+       idType.name.text == "Void" {
+        return true
+    }
+    if let tupleType = type.as(TupleTypeSyntax.self),
+       tupleType.elements.isEmpty {
+        return true
+    }
+    return false
+}
+
 enum AddAsyncMacroError: Error, CustomStringConvertible {
     case notAFunction
     case alreadyAsync
-    case nonVoid
+    case nonVoidFunc
     case noCompletionHandler
     case nonVoidCompletionHandler
     case unexpectedGeneric
@@ -170,7 +185,7 @@ enum AddAsyncMacroError: Error, CustomStringConvertible {
         switch self {
         case .notAFunction: "@AddAsync only works on functions"
         case .alreadyAsync: "@AddAsync requires an non async function"
-        case .nonVoid: "@AddAsync requires an function that returns void"
+        case .nonVoidFunc: "@AddAsync requires an function that returns void"
         case .noCompletionHandler: "@AddAsync requires an function that has a completion handler as last parameter"
         case .nonVoidCompletionHandler: "@AddAsync requires an function that has a completion handler that returns Void"
         case .unexpectedGeneric: "Found unexpected value generic in Result type"

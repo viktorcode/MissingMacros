@@ -82,7 +82,7 @@ final class MissingMacrosTests: XCTestCase {
         struct MyStruct {
             @AddAsync
             func doResult(a: Int, for b: String, _ value: Double,
-                          completionBlock: @escaping (Bool) -> Void) {
+                          completionBlock: @escaping (Bool) -> ()) {
                 completionBlock(true)
             }
         }
