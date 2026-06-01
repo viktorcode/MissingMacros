@@ -4,14 +4,15 @@ Collection of Swift macros to fill the boilerplate gaps in the language. If the 
 
 ---
 
-## `#url`
+### `#url`
 Validates a URL string at compile time and produces a non‑optional `URL`.
 
 ```swift
 let url: URL = #url("https://www.apple.com")
 ```
+---
 
-## `@CaseAccessor`
+### `@CaseAccessor`
 For each enum case generates a boolean check (is<Case>) and associated values accessors (<case>) for cases that have them.
 
 ```swift
@@ -31,8 +32,9 @@ if state.isIdle || state.isLoading {    // No need for pattern matching; can wri
     }
 }
 ```
+---
 
-## `@LogExecution`
+### `@LogExecution`
 Logs every call to the annotated function, including its arguments.
 
 ```swift
@@ -46,8 +48,9 @@ greet(name: "World")
 // greet(name: World)
 // Hello, World
 ```
+---
 
-## `@OptionSet`
+### `@OptionSet`
 Adds `OptionSet` conformance to a struct.
 
 ```swift
@@ -58,8 +61,9 @@ if status.contains(.green) {
     print("Green channel is active")
 }
 ```
+---
 
-## `@AddAsync`
+### `@AddAsync`
 Creates an async overload of a function that has a completion handler as its last parameter.
 
 ```swift
@@ -74,8 +78,9 @@ Task {
     // ...
 }
 ```
+---
 
-## `@AddCompletion`
+### `@AddCompletion`
 Adds an overload with a completion handler to an async function.
 
 ```swift
@@ -89,8 +94,9 @@ fetchData(for: userID) { result in  // Result<String, Error>
     // ...
 }
 ```
+---
 
-## `@CopyBuilder`
+### `@CopyBuilder`
 Generates with(…) methods for every stored property of a struct, returning a modified copy.
 
 ```swift
