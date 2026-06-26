@@ -1,7 +1,9 @@
 # The Missing Macros #
 
 Collection of Swift macros to fill the boilerplate gaps in the language. If the boilerplate can be eliminated by other means in the language (i.e. property wrappers, extensions etc.) it should not be present here.
-
+---
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fviktorcode%2FMissingMacros%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/viktorcode/MissingMacros)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fviktorcode%2FMissingMacros%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/viktorcode/MissingMacros)
 ---
 
 ### `#url`
