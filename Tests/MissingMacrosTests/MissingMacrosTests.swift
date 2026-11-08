@@ -11,7 +11,7 @@ import MissingMacrosInternal
 
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
-    "CopyBuilder": CopyBuilderMacro.self,             // ← fix typo: was "CopBuilder"
+    "CopyBuilder": CopyBuilderMacro.self,
     "AddCompletion": AddCompletionMacro.self,
     "LogExecution": LogExecutionMacro.self,
     "OptionSet": OptionSetMacro.self
@@ -227,6 +227,23 @@ final class MissingMacrosTests: XCTestCase {
         XCTAssertTrue(state.isLoaded)
         XCTAssertEqual(state.loaded, Optional<String>.some("Hello"))
         XCTAssertNil(state.loading)
+    }
+
+    func testCaseAccessorMultipleAssociatedValuesRuntime() {
+        @CaseAccessor
+        enum LoadState {
+            case idle
+            case loaded(data: String, progress: Double)
+        }
+
+        let state = LoadState.loaded(data: "Hello", progress: 0.5)
+        XCTAssertTrue(state.isLoaded)
+
+        // The helper var should return both associated values as a labelled tuple.
+        let loaded: (data: String, progress: Double)? = state.loaded
+        XCTAssertEqual(loaded?.data, "Hello")
+        XCTAssertEqual(loaded?.progress, 0.5)
+        XCTAssertFalse(state.isIdle)
     }
 
     // MARK: - LogExecution Tests
