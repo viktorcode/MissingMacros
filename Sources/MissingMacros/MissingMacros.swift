@@ -13,6 +13,10 @@ public macro AddAsync() = #externalMacro(module: "MissingMacrosInternal", type: 
 @attached(peer, names: overloaded)
 public macro AddCompletion() = #externalMacro(module: "MissingMacrosInternal", type: "AddCompletionMacro")
 
+/// Adds a public memberwise initializer to a struct.
+@attached(member, names: arbitrary)
+public macro PublicInit() = #externalMacro(module: "MissingMacrosInternal", type: "PublicInitMacro")
+
 /// For each struct's property, generates function of the form `func with(...)` for creating a struct copy with the property value replaced.
 @attached(member, names: arbitrary)
 public macro CopyBuilder() = #externalMacro(module: "MissingMacrosInternal", type: "CopyBuilderMacro")

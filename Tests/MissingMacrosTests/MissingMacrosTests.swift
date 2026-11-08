@@ -12,6 +12,7 @@ import MissingMacrosInternal
 let testMacros: [String: Macro.Type] = [
     "url": URLMacro.self,
     "CopyBuilder": CopyBuilderMacro.self,
+    "PublicInit": PublicInitMacro.self,
     "AddCompletion": AddCompletionMacro.self,
     "LogExecution": LogExecutionMacro.self,
     "OptionSet": OptionSetMacro.self
@@ -321,6 +322,100 @@ final class MissingMacrosTests: XCTestCase {
                 static let blue = Self(rawValue: RawValue(1 << 2))
             }
             """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    // MARK: - PublicInit Tests
+    func testPublicInitExpansion() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @PublicInit
+            struct User {
+                static let category = "person"
+                let identifier: Int
+                let role: String = "guest"
+                let secondaryIdentifier: Int?
+                var name: String
+                var age: Int = 18
+                var nickname: String?
+                var token: String!
+                var displayName: String { name }
+            }
+            """,
+            expandedSource: """
+            struct User {
+                static let category = "person"
+                let identifier: Int
+                let role: String = "guest"
+                let secondaryIdentifier: Int?
+                var name: String
+                var age: Int = 18
+                var nickname: String?
+                var token: String!
+                var displayName: String { name }
+
+                public init(identifier: Int, secondaryIdentifier: Int?, name: String, age: Int = 18, nickname: String? = nil, token: String! = nil) {
+                    self.identifier = identifier
+                    self.secondaryIdentifier = secondaryIdentifier
+                    self.name = name
+                    self.age = age
+                    self.nickname = nickname
+                    self.token = token
+                }
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testPublicInitRuntime() {
+        @PublicInit
+        struct Credentials {
+            let username: String
+            let recoveryCode: String?
+            var attempts: Int = 0
+            var nickname: String?
+        }
+
+        let defaultAttempts = Credentials(username: "neo", recoveryCode: nil)
+        XCTAssertEqual(defaultAttempts.username, "neo")
+        XCTAssertEqual(defaultAttempts.attempts, 0)
+        XCTAssertNil(defaultAttempts.nickname)
+
+        let withAttempts = Credentials(username: "trinity", recoveryCode: "redpill", attempts: 3, nickname: "Trin")
+        XCTAssertEqual(withAttempts.username, "trinity")
+        XCTAssertEqual(withAttempts.recoveryCode, "redpill")
+        XCTAssertEqual(withAttempts.attempts, 3)
+        XCTAssertEqual(withAttempts.nickname, "Trin")
+    }
+
+    func testPublicInitOnNonStruct() throws {
+        #if canImport(MissingMacrosInternal)
+        assertMacroExpansion(
+            """
+            @PublicInit
+            enum State {
+                case idle
+            }
+            """,
+            expandedSource: """
+            enum State {
+                case idle
+            }
+            """,
+            diagnostics: [
+                .init(message: "@PublicInit can only be applied to a struct",
+                      line: 1, column: 1,
+                      severity: .error)
+            ],
             macros: testMacros
         )
         #else
