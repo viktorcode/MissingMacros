@@ -62,6 +62,20 @@ if status.contains(.green) {
 }
 ```
 ---
+### `@PublicInit`
+Creates a public memberwise initializer for a struct. 
+
+```swift
+// In a package:
+@PublicInit
+public struct Credentials {
+    let username: String
+    let recoveryCode: String?
+    var attempts: Int = 0
+    var nickname: String?
+}
+// The default initializer is now accessible from another module.
+```
 
 ### `@AddAsync`
 Creates an async overload of a function that has a completion handler as its last parameter.
